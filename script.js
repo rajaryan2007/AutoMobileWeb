@@ -150,3 +150,111 @@ function initializeMap() {
     };
     legend.addTo(map);
 }
+
+
+// SEO & Analytics Tracking
+function trackEvent(eventName, eventData = {}) {
+    if (window.gtag) {
+        gtag('event', eventName, eventData);
+    }
+    console.log('Event tracked:', eventName, eventData);
+}
+
+// Track CTA clicks
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-primary, .cta-button, a[href^="tel:"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const buttonText = this.textContent.trim();
+            trackEvent('cta_click', {
+                button_text: buttonText,
+                page: window.location.pathname,
+                element_type: this.tagName
+            });
+        });
+    });
+});
+
+// Track form submissions
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            const serviceType = document.getElementById('service')?.value || 'unknown';
+            trackEvent('form_submission', {
+                service_type: serviceType,
+                page: window.location.pathname
+            });
+        });
+    }
+});
+
+// Track page scroll depth
+let maxScroll = 0;
+window.addEventListener('scroll', function() {
+    const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    if (scrollPercent > maxScroll) {
+        maxScroll = scrollPercent;
+        if (maxScroll > 25 && maxScroll <= 50) {
+            trackEvent('scroll_depth', { depth: '25%' });
+        } else if (maxScroll > 50 && maxScroll <= 75) {
+            trackEvent('scroll_depth', { depth: '50%' });
+        } else if (maxScroll > 75) {
+            trackEvent('scroll_depth', { depth: '75%' });
+        }
+    }
+});
+
+// Lazy load images for performance
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                img.classList.add('loaded');
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: '50px'
+    });
+    
+    document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
+}
+
+// Performance monitoring (using modern PerformanceNavigationTiming API)
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const entries = performance.getEntriesByType('navigation');
+        if (entries.length > 0) {
+            const navEntry = entries[0];
+            trackEvent('page_load_time', {
+                load_time_ms: Math.round(navEntry.loadEventEnd - navEntry.startTime),
+                dom_content_loaded_ms: Math.round(navEntry.domContentLoadedEventEnd - navEntry.startTime),
+                first_byte_ms: Math.round(navEntry.responseStart - navEntry.startTime),
+                page: window.location.pathname
+            });
+        }
+    }, 100);
+});
+
+// Track outbound links
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link && link.href && link.href.indexOf(window.location.hostname) === -1 && link.href.indexOf('http') === 0) {
+        trackEvent('outbound_link', {
+            url: link.href,
+            text: link.textContent.trim()
+        });
+    }
+}, true);
+
+// Dynamic copyright year
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.copyright-year').forEach(function(el) {
+        el.textContent = new Date().getFullYear();
+    });
+});
