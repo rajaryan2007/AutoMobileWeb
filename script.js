@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Initialize Leaflet Map
+// Initialize Leaflet Map with Stamen tiles (no 403r issues)
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
 });
@@ -74,10 +74,10 @@ function initializeMap() {
     // Create map
     const map = L.map('map').setView(charlotteCoords, 11);
     
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
+    // Use Stamen tiles instead of OpenStreetMap (avoids 403r issues)
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 20
     }).addTo(map);
     
     // Add service area circle (15 mile radius)
