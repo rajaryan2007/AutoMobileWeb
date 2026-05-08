@@ -59,96 +59,28 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Initialize Leaflet Map with Stamen tiles (no 403r issues)
+// Initialize Google Maps Embed
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
 });
 
 function initializeMap() {
     const mapElement = document.getElementById('map');
-    if (!mapElement || typeof L === 'undefined') return;
+    if (!mapElement) return;
 
-    // Charlotte, NC coordinates
-    const charlotteCoords = [35.2271, -80.8431];
-    
-    // Create map
-    const map = L.map('map').setView(charlotteCoords, 11);
-    
-    // Use Stamen tiles instead of OpenStreetMap (avoids 403r issues)
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 20
-    }).addTo(map);
-    
-    // Add service area circle (15 mile radius)
-    const serviceRadius = 24.14; // 15 miles in km
-    L.circle(charlotteCoords, {
-        color: '#d32f2f',
-        fillColor: '#d32f2f',
-        fillOpacity: 0.15,
-        weight: 2,
-        radius: serviceRadius * 1000,
-        dashArray: '5, 5'
-    }).addTo(map);
-    
-    // Add center marker with custom icon
-    const markerIcon = L.icon({
-        iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCAzMiA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEM4LjI3IDAgMiA2LjI3IDIgMTRjMCA4IDE0IDM0IDE0IDM0czE0LTI2IDE0LTM0YzAtNy43My02LjI3LTE0LTE0LTE0eiIgZmlsbD0iI2QzMmYyZiIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTQiIHI9IjYiIGZpbGw9IndoaXRlIi8+PC9zdmc+',
-        iconSize: [32, 48],
-        iconAnchor: [16, 48],
-        popupAnchor: [0, -48]
-    });
-    
-    const marker = L.marker(charlotteCoords, { icon: markerIcon }).addTo(map);
-    
-    // Add popup to marker
-    marker.bindPopup(`
-        <div style="font-weight: 600; color: #d32f2f; margin-bottom: 4px;">Geoff's Mobile Auto Repair</div>
-        <div style="color: #666; font-size: 13px; margin-bottom: 4px;">Charlotte, NC</div>
-        <div style="color: #666; font-size: 13px; margin-bottom: 8px;">📞 (704) 236-5670</div>
-        <div style="font-size: 12px; color: #999;">We come to you!</div>
-    `).openPopup();
-    
-    // Add service area markers (example locations)
-    const serviceLocations = [
-        { name: 'Uptown Charlotte', coords: [35.2271, -80.8431] },
-        { name: 'South Charlotte', coords: [35.1500, -80.8500] },
-        { name: 'North Charlotte', coords: [35.3500, -80.8200] },
-        { name: 'East Charlotte', coords: [35.2200, -80.7500] },
-        { name: 'West Charlotte', coords: [35.2300, -80.9200] }
-    ];
-    
-    serviceLocations.forEach(location => {
-        L.circleMarker(location.coords, {
-            radius: 5,
-            fillColor: '#d32f2f',
-            color: '#fff',
-            weight: 2,
-            opacity: 0.8,
-            fillOpacity: 0.8
-        }).addTo(map).bindPopup(`<strong>${location.name}</strong><br>Service Area`);
-    });
-    
-    // Add legend
-    const legend = L.control({ position: 'bottomright' });
-    legend.onAdd = function(map) {
-        const div = L.DomUtil.create('div', 'map-legend');
-        div.innerHTML = `
-            <div style="background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 12px; font-family: inherit;">
-                <div style="margin-bottom: 8px; font-weight: 600;"><strong>Service Area</strong></div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                    <div style="width: 12px; height: 12px; background: #d32f2f; border-radius: 50%;"></div>
-                    <span>Service Locations</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 2px; background: #d32f2f; border-top: 2px dashed #d32f2f;"></div>
-                    <span>15 Mile Radius</span>
-                </div>
-            </div>
-        `;
-        return div;
-    };
-    legend.addTo(map);
+    // Create Google Maps embed iframe
+    mapElement.innerHTML = `
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d209271.43943804825!2d-81.04620169999999!3d35.2270869!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88541fc4fc381a81%3A0x884650e6bf43d164!2sCharlotte%2C%20NC!5e0!3m2!1sen!2sus!4v1700000000000" 
+            width="100%" 
+            height="100%" 
+            style="border:0; border-radius: 12px;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Geoff's Mobile Auto Repair - Charlotte, NC Service Area">
+        </iframe>
+    `;
 }
 
 
